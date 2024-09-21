@@ -19,6 +19,20 @@ const HomePage = () => {
         setIsModalVisible(false);
     }
 
+    const getCurrentLocation = () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((position) => {
+                const { latitude, longitude } = position.coords;
+                alert(`Latitude: ${latitude}, Longitude: ${longitude}`);
+            },
+            (error) => {
+                alert(error.message);
+            });
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+    }
+
     return (
         <div className="home">
             <div className="home-search">
@@ -26,7 +40,7 @@ const HomePage = () => {
                 <Search />
 
                 <div className="">
-                    <Button onClick={() => {alert("clicked")}} content="Use current location" isActive={false} />
+                    <Button onClick={getCurrentLocation} content="Use current location" isActive={false} />
                 </div>
 
                 <Separator content="Register" />
