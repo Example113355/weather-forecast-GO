@@ -9,7 +9,7 @@ const EmailConfirmModal = ({ visible, onClose, type }) => {
     const [form] = Form.useForm();
     const [locations, setLocations] = useState([]);
 
-    let searchHistory = JSON.parse(localStorage.getItem('searchHistory'))
+    let searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
     let locationOptions = searchHistory.map((location) => {
         return { label: location, value: location }
     });
