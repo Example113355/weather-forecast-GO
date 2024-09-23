@@ -1,14 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Search from "../components/search"
 import Button from "../components/button"
 import WeatherCard from "../components/weather_card"
 import ForecastItem from "../components/forecast_item"
 import Separator from "../components/separator"
 import EmailConfirmModal from '../components/email_confirmation';
+import axios from 'axios';
 
 const HomePage = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [modalType, setModalType] = useState('');
+    const [location, setLocation] = useState("vietnam");
+    const [data, setData] = useState(null)
+    const [forecastItems, setForecastItems] = useState(4)
+
+    useEffect(() => {
+        const getData = async () => {
+            const res = await axios.get(`https://weather-forecast-go-be.vercel.app/api/weather/${location}`)
+            setData(res.data)
+        }
+        getData();
+    }, [location])
+
+    useEffect(() => {
+        const forecastList = document.querySelector('.forecast-list');
+        if (forecastList) {
+            forecastList.scrollLeft = forecastList.scrollWidth;
+        }
+    }, [forecastItems]);
 
     const showModal = (type) => {
         setModalType(type);
@@ -23,7 +42,8 @@ const HomePage = () => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition((position) => {
                 const { latitude, longitude } = position.coords;
-                alert(`Latitude: ${latitude}, Longitude: ${longitude}`);
+                setLocation(`${latitude},${longitude}`);
+                setForecastItems(4);
             },
             (error) => {
                 alert(error.message);
@@ -37,7 +57,7 @@ const HomePage = () => {
         <div className="home">
             <div className="home-search">
                 <span className="home-search--title">Enter a City or a Country Name</span>
-                <Search />
+                <Search setLocation={setLocation} />
 
                 <div className="">
                     <Button onClick={getCurrentLocation} content="Use current location" isActive={false} />
@@ -51,21 +71,38 @@ const HomePage = () => {
                 </div>
             </div>
             <div className="home-content">
-                <WeatherCard />
+                {data ? (
+                    <WeatherCard currentData={data} />
+                ) : (
+                    <div>Loading...</div>
+                )}
 
                 <div className="forecast-content">
                     <span className="forecast-content--header">Weather Forecast</span>
 
                     <div className="forecast-list">
-                        <ForecastItem />
-                        <ForecastItem />
-                        <ForecastItem />
-                        <ForecastItem />
+                        {data ? (
+                            data.forecast.forecastday.slice(0, forecastItems).map((item, index) => (
+                                <ForecastItem 
+                                    key={index}  
+                                    date = {item.date}
+                                    temperature = {item.day.avgtemp_c}
+                                    wind = {item.day.maxwind_mph}
+                                    humidity = {item.day.avghumidity}
+                                    icon = {item.day.condition.icon}
+                                    condition = {item.day.condition.text}
+                                />
+                            ))
+                        ): (
+                            <div>Loading...</div>
+                        )}
                     </div>
 
-                    <button className="forecast-next">
-                        &gt;
-                    </button>
+                    {forecastItems < data?.forecast.forecastday.length && (
+                        <button className="forecast-next" onClick={() => setForecastItems(forecastItems + 1)}>
+                            &gt;
+                        </button>
+                    )}
                 </div>
             </div>
 

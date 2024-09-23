@@ -1,16 +1,16 @@
-const WeatherCard = () => {
+const WeatherCard = ({ currentData }) => {
     return (
         <div className="weather-card">
             <div className="card-information">
-                <h3>London (2023 - 06 - 09)</h3>
-                <span>Temperature: 18.71C</span>
-                <span>Wind: 4.31 M/S</span>
-                <span>Humidity: 76%</span>
+                <h3>{`${currentData.location.name} (${currentData.current.last_updated})`}</h3>
+                <span>Temperature: {currentData.current.temp_c}C</span>
+                <span>Wind: {currentData.current.wind_mph} M/H</span>
+                <span>Humidity: {currentData.current.humidity}%</span>
             </div>
 
             <div className="card-condition">
-                <img src="https://cdn.weatherapi.com/weather/64x64/day/113.png" alt="" />
-                <span>Partly Cloudy</span>
+                <img src={`https:${currentData.current.condition.icon}`} alt="" />
+                <span>{currentData.current.condition.text}</span>
             </div>
         </div>
     )

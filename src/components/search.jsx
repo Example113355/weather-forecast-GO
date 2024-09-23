@@ -1,12 +1,25 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Input, List, Typography } from 'antd';
+import axios from 'axios';
+import debounce from 'lodash/debounce';
 
-const Search = () => {
+const Search = ({ setLocation }) => {
     const { Search } = Input;
     const [showSearchTable, setShowSearchTable] = useState(false);
-    const onSearch = (value, _e, info) => console.log(value);
+    const [searchInput, setSearchInput] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
 
-    let searchHistory = ['london', 'new york', 'tokyo', 'paris', 'berlin', 'rome', 'madrid', 'lisbon', 'amsterdam', 'brussels', 'vienna', 'prague', 'budapest', 'warsaw', 'moscow'];
+    let searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
+
+    const saveToLocalStorage = (value) => {
+        searchHistory.push(value);
+        localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+    };
+
+    const onSearch = (value, _e, info) => {
+        setLocation(value)
+        saveToLocalStorage(value);
+    };
 
     const handleFocus = () => {
         setShowSearchTable(true);
@@ -18,6 +31,37 @@ const Search = () => {
         }, 200);
     }
 
+    const handleItemClick = (value) => {
+        setLocation(value);
+        setShowSearchTable(false);
+
+        if(!searchHistory.includes(value)) {
+            saveToLocalStorage(value);
+        }
+    };
+
+    const fetchSearchResults = async (value) => {
+        try {
+            const res = await axios.get(`https://weather-forecast-go-be.vercel.app/api/weather/search/${value}`);
+            const names = res.data.map((item) => item.name);
+            setSearchResults(names);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    const debouncedFetchSearchResults = debounce(fetchSearchResults, 500);
+
+    useEffect(() => {
+        if (searchInput) {
+            debouncedFetchSearchResults(searchInput);
+        }
+    }, [searchInput]);
+
+    const handleChange = (e) => {
+        setSearchInput(e.target.value);
+    }
+
     return (
         <div className="search-container">
             <Search 
@@ -26,15 +70,16 @@ const Search = () => {
                 enterButton 
                 onFocus={handleFocus}
                 onBlur={handleBlur}
+                onChange={handleChange}
             />
 
-            {showSearchTable && searchHistory.length > 0 && (
+            {showSearchTable && (
                 <List
                     bordered
-                    dataSource={searchHistory}
-                    className="search-table"
+                    dataSource={searchInput? searchResults : searchHistory}
+                    className='search-table'
                     renderItem={(item) => (
-                        <List.Item>
+                        <List.Item onClick={() => handleItemClick(item)}>
                             <Typography.Text>{item}</Typography.Text>
                         </List.Item>
                     )}

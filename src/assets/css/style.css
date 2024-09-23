@@ -63,11 +63,11 @@ html {
 }
 
 .home-search {
-  flex: 1;
+  width: 30%;
 }
 
 .home-content {
-  flex: 2;
+  width: 65%;
   margin-left: 40px;
 }
 
@@ -223,8 +223,8 @@ html {
 
 .search-table {
   margin-top: 10px;
-  height: 200px;
-  overflow-y: auto;
+  overflow-y: scroll;
+  max-height: 300px;
   position: absolute;
   width: 100%;
   background-color: #fff;
