@@ -17,6 +17,10 @@ const HomePage = () => {
     useEffect(() => {
         const getData = async () => {
             const res = await axios.get(`https://weather-forecast-go-be.vercel.app/api/weather/${location}`)
+            if(res.data.error_code) {
+                alert(res.data.message)
+                return
+            }
             setData(res.data)
         }
         getData();
