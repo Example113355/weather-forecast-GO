@@ -1,8 +1,26 @@
-# React + Vite
+# Weather forecast Front-end
+This is the Front-end page for the weather forecast project using ReactJs and Vite. To run this project, follow these steps:
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+1. First, clone the project from repository with:
+    ```
+    git clone <repository-url>
+    ```
 
-Currently, two official plugins are available:
+2. Make sure that you are in the 'weather' directory. If not, use:
+    ```
+    cd weather
+    ```
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+3. Next, install dependencies with:
+    ```
+    npm install
+    ```
+
+4. Finally, run the project with:
+    ```
+    npm run dev
+    ```
+
+This will start the development server and you can view the project in your browser at `http://localhost:5173`. 
+
+You can find the demo project at here: [https://weather-forecast-go.vercel.app/](https://weather-forecast-go.vercel.app/)
